@@ -1,0 +1,87 @@
+Source:
+https://www.bogotobogo.com/DevOps/Docker/Docker-Vault-Consul.php
+https://www.bogotobogo.com/DevOps/Docker/Docker-Vault-Consul-B.php
+https://www.bogotobogo.com/DevOps/Docker/Docker-Vault-Consul-C.php
+
+
+docker-compose up -d --build
+
+VAULT
+Initializing and Unsealing
+	docker-compose exec vault bash
+Initialize Vault
+	vault operator init
+
+	Unseal Key 1 - 5:
+
+	Initial Root Token: ...
+
+Vault initialized with 5 key shares and a key threshold of 3. Please securely
+distribute the key shares printed above. When the Vault is re-sealed,
+restarted, or stopped, you must supply at least 3 of these keys to unseal it
+before it can start servicing requests.
+
+Vault does not store the generated master key. Without at least 3 key to
+reconstruct the master key, Vault will remain permanently sealed!
+
+It is possible to generate new unseal keys, provided you have a quorum of
+existing unseal keys shares. See "vault operator rekey" for more information.
+
+Now we can unseal Vault using three of the keys:
+	vault operator unseal unseal_key_1
+	vault operator unseal unseal_key_2
+	vault operator unseal unseal_key_3
+
+Let's authenticate using the root token:
+	vault login root_token
+
+Auditing
+Detailed log
+	vault audit enable file file_path=/vault/logs/audit.log
+View all enabled audit devices
+	vault audit list
+
+SECRETS
+
+Enable versioning
+	vault kv enable-versioning secret/
+
+Static secrets
+
+Create
+	vault kv put secret/foo bar=precious
+Read
+	vault kv get secret/foo
+Update
+	vault kv put secret/foo bar=copper
+Read specific version
+	vault kv get -version=1 secret/foo
+
+API
+Root token as environment variable
+	export VAULT_TOKEN=token
+
+create a new secret
+curl \
+     -H "X-Vault-Token: $VAULT_TOKEN" \
+     -H "Content-Type: application/json" \
+     -X POST \
+     -d '{ "data": { "foo": "world" } }' \
+     http://127.0.0.1:8200/v1/secret/data/hello
+
+read the secret
+curl \
+     -H "X-Vault-Token: $VAULT_TOKEN" \
+     -X GET \
+     http://127.0.0.1:8200/v1/secret/data/hello
+
+
+POLICIES
+Root policy to interact with the API
+Policy with only read access
+
+
+
+
+Dynamic secrets
+
