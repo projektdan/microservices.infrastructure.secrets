@@ -46,7 +46,7 @@ SECRETS
 Enable versioning
 	vault kv enable-versioning secret/
 
-Static secrets
+STATIC SECRET
 
 Create
 	vault kv put secret/foo bar=precious
@@ -79,6 +79,18 @@ curl \
 POLICIES
 Root policy to interact with the API
 Policy with only read access
+{
+  "path": {
+    "secret/data/app/*": {
+      "policy": "read"
+    }
+  }
+}
+
+After add new policy we have to generate new token
+vault token create -policy=app
+
+Using this policy with token we have only read access to path: secret/data/app/*
 
 
 
