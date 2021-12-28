@@ -1,7 +1,8 @@
 {
     "backend": {
-      "file": {
-        "path": "vault/data"
+      "consul": {
+        "address": "consul:8500",
+        "path": "vault/"
       }
     },
     "listener": {

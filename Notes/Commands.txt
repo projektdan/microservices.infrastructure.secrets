@@ -6,7 +6,7 @@ https://www.bogotobogo.com/DevOps/Docker/Docker-Vault-Consul-C.php
 
 docker-compose up -d --build
 
-VAULT
+VAULT (with filesystem backend no scaleable)
 Initializing and Unsealing
 	docker-compose exec vault bash
 Initialize Vault
@@ -92,8 +92,42 @@ vault token create -policy=app
 
 Using this policy with token we have only read access to path: secret/data/app/*
 
+TRANSIT SECRETS
+Transient can be used as an Encryption as a Service.
+	Encrypting and decrypting data "in-transit" without storing it inside Vault.
+	Easily integrating encryption into our application workflow.
+
+ENABLE ENGINE
+	vault secrets enable transit
+
+Encrypt
+	vault write transit/encrypt/foo plaintext=$(base64 <<< "my value")
+
+Decrypt
+	vault write transit/decrypt/foo ciphertext=vault:v1:ktjSd/AejJBwrAauKqmUzhM0ue/v/WD/RpRqYZlXgYxDA70RyQ==
+
+Decode
+	base64 -d <<< "bXkgdmFsdWUK"
 
 
+DYNAMIC SECRETS
+	As we already know, Vault supports a number of dynamic secret backends for generating secrets dynamically when needed.
+	For example, with the AWS and Google Cloud backends, we can create access credentials based on IAM policies.
+	The Databases backend, meanwhile, generates database credentials based on configured roles.
+	Dynamic Secrets are generated on demand. They have limited access based on role,
+	and they are leased for a period of time. They can be revoked and come with an audit trail.
 
-Dynamic secrets
+HASHICORP VAULT AND HASHICORP CONSUL
+	We can use consul backend for distributed systems.
+Consul has multiply components such as discovering and configuring services in our infrastructure.
+Key features:
+	Service Discovery
+	Health Checking
+	KV Store
+	Multi Datacenter
+Consul as KV Storage backend
+
+Consul configuration
+https://www.consul.io/docs/agent/options
+
 
