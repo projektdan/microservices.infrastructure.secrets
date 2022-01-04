@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8200:8200
+    restart: always
     volumes:
       - ./vault/config:/vault/config
       - ./vault/policies:/vault/policies
@@ -27,6 +28,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8500:8500
+    restart: always
     command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect 1 -config-file=/consul/config/config.json
     volumes:
       - ./consul/config/consul-config.json:/consul/config/config.json
