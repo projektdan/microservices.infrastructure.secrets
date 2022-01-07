@@ -13,13 +13,13 @@ vault kv put projects-api/secrets/static 'password=SuperPassw0rd'
 
 vault write projects-api/database/config/projects-database \
 	 	plugin_name=mssql-database-plugin \
-	 	connection_url='sqlserver://{{username}}:{{password}}@db:1433' \
+	 	connection_url='sqlserver://{{username}}:{{password}}@mssql-express' \
 	 	allowed_roles="projects-api-role" \
 	 	username="sa" \
 	 	password="SuperPassw0rd"
 
 vault write projects-api/database/roles/projects-api-role \
-    db_name=projects-database \
+    db_name=HashiCorp \
     creation_statements="CREATE LOGIN [{{name}}] WITH PASSWORD = '{{password}}';\
 				USE HashiCorp;\
 				CREATE USER [{{name}}] FOR LOGIN [{{name}}];\
@@ -27,7 +27,7 @@ vault write projects-api/database/roles/projects-api-role \
     default_ttl="2m" \
     max_ttl="5m"
 
-vault policy write projects-api ./projects-role-policy.hcl
+vault policy write projects-api ./projects-role-policy.json
 
 vault write auth/approle/role/projects-api-role \
 	  role_id="projects-api-role" \
@@ -38,3 +38,7 @@ vault write auth/approle/role/projects-api-role \
 
 echo "projects-api-role" > ProjectApi/vault-agent/role-id
 vault write -f -field=secret_id auth/approle/role/projects-api-role/secret-id > ProjectApi/vault-agent/secret-id
+
+
+sudo docker exec -it mssql-express bash
+/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "SuperPassw0rd"

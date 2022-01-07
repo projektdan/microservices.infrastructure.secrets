@@ -40,6 +40,8 @@ Detailed log
 	vault audit enable file file_path=/vault/logs/audit.log
 View all enabled audit devices
 	vault audit list
+Docker logs
+	docker logs container_vault_name
 
 SECRETS
 
@@ -130,4 +132,13 @@ Consul as KV Storage backend
 Consul configuration
 https://www.consul.io/docs/agent/options
 
+
+RESET VAULT-CONSUL configuration
+
+- docker-compose down
+- Remove from consul vault key/value
+- docker-compose exec consul bash
+  consul kv delete -recurse vault/
+- docker container stop consul and vault
+- docker container start consul and vault
 
