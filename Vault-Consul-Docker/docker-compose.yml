@@ -17,6 +17,7 @@ services:
      - ./consul/config/server1-config.json:/consul/config/server1-config.json
      - ./consul/certs/:/consul/config/certs/:ro
      - ./consul/acls/:/consul/config/acls/
+     - ./consul/data:/consul/data
     networks:
       - consul
     ports:
@@ -35,6 +36,7 @@ services:
      - ./consul/config/server2-config.json:/consul/config/server2-config.json
      - ./consul/certs/:/consul/config/certs/:ro
      - ./consul/acls/:/consul/config/acls/
+     - ./consul/data:/consul/data
     networks:
       - consul
     command: "agent -bootstrap-expect=3"
@@ -49,6 +51,7 @@ services:
      - ./consul/config/server3-config.json:/consul/config/server3-config.json
      - ./consul/certs/:/consul/config/certs/:ro
      - ./consul/acls/:/consul/config/acls/
+     - ./consul/data:/consul/data
     networks:
       - consul
     command: "agent -bootstrap-expect=3"
@@ -66,11 +69,17 @@ services:
       - ./vault/logs:/vault/logs
     environment:
       VAULT_ADDR: "http://0.0.0.0:8200"
+      VAULT_API_ADDR: "http://127.0.0.1:8200"
       VAULT_DEV_ROOT_TOKEN_ID: "vault-plaintext-root-token"
       CONSUL_HTTP_ADDR: "consul-server1:8500"
       CONSUL_HTTP_TOKEN: "e95b599e-166e-7d80-08ad-aee76e7ddf19"
+    command: server -config=/vault/config/vault-config.json
     cap_add:
       - IPC_LOCK
+    depends_on:
+      - consul-server1
+      - consul-server2
+      - consul-server3
     networks:
       - consul
 

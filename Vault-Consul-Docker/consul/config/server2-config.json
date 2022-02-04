@@ -1,6 +1,8 @@
 {
     "node_name": "consul-server2",
     "server": true,
+    "datacenter": "localhost",
+    "log_level": "DEBUG",
     "ui_config": {
         "enabled" : true
     },
