@@ -83,10 +83,6 @@ services:
     command: server -config=/vault/config/vault-config.json
     cap_add:
       - IPC_LOCK
-    depends_on:
-      - consul-server1
-      - consul-server2
-      - consul-server3
     networks:
       - consul
 
