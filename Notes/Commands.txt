@@ -45,9 +45,6 @@ Docker logs
 
 SECRETS
 
-Enable new secrets engine with path
-	vault secrets enable -path=kv kv
-	
 Enable versioning
 	vault kv enable-versioning secret/
 
@@ -65,7 +62,6 @@ Read specific version
 API
 Root token as environment variable
 	export VAULT_TOKEN=token
-	export VAULT_ADDR=token
 
 create a new secret
 curl \
@@ -146,38 +142,3 @@ RESET VAULT-CONSUL configuration
 - docker container stop consul and vault
 - docker container start consul and vault
 
-ACCESS IN VAULT
-
-#list the current auth methods
-vault auth list
-
-#Enable Userpass auth method
-vault auth enable userpass
-
-#Help
-vault path-help auth/userpass
-
-#Add new user
-vault write auth/userpass/users/daniel password=password
-
-#Users list
-vault list auth/userpass/users
-
-vault login -method=userpass username=daniel
-
-curl --header "X-Vault-Token: $VAULT_TOKEN" --request POST \
-	--data '{"username": "daniel", "password": "password"}' $VAULT_ADDR/v1/auth/userpass/login/daniel
-
-# JSON format return
-curl --header "X-Vault-Token: $VAULT_TOKEN" --request POST \
-	--data '{"username": "daniel", "password": "password"}' $VAULT_ADDR/v1/auth/userpass/login/daniel | AejJBwrAauKqmUzhM0ue
-
-#Remove account
-vault delete auth/userpass/users/daniel
-
-#Create a new secrets engine kv path for devs
-vault secrets enable -path=devkv kv
-vault kv put devkv/alldevs answer=42
-
-#Create a new policy for dev
-vault policy write dev devpol.hcl

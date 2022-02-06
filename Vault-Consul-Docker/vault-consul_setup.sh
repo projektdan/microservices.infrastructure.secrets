@@ -19,7 +19,7 @@ vault write projects-api/database/config/projects-database \
 	 	password="SuperPassw0rd"
 
 vault write projects-api/database/roles/projects-api-role \
-    db_name=projects-database \
+    db_name=HashiCorp \
     creation_statements="CREATE LOGIN [{{name}}] WITH PASSWORD = '{{password}}';\
 				USE HashiCorp;\
 				CREATE USER [{{name}}] FOR LOGIN [{{name}}];\
@@ -27,7 +27,7 @@ vault write projects-api/database/roles/projects-api-role \
     default_ttl="2m" \
     max_ttl="5m"
 
-vault policy write projects-api ./projects-role-policy.hcl
+vault policy write projects-api ./projects-role-policy.json
 
 vault write auth/approle/role/projects-api-role \
 	  role_id="projects-api-role" \
