@@ -47,7 +47,6 @@ services:
       - consul_vault
     command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect 1 -config-file=/consul/config/config.json
 
-  
-  networks:
-    consul_vault:
-      driver: bridge
+networks:
+  consul_vault:
+    driver: bridge
