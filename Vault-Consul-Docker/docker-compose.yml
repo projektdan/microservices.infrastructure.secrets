@@ -2,7 +2,7 @@ version: '3.6'
 
 services:
 
-  vault:
+  vault-server:
     build:
       context: ./vault
       dockerfile: Dockerfile
@@ -15,22 +15,39 @@ services:
       - ./vault/data:/vault/data
       - ./vault/logs:/vault/logs
     environment:
-      - VAULT_ADDR=http://127.0.0.1:8200
-      - VAULT_API_ADDR=http://127.0.0.1:8200
+      VAULT_ADDR: "http://127.0.0.1:8200"
+      VAULT_DEV_ROOT_TOKEN_ID: "vault-plaintext-root-token"
+      VAULT_API_ADDR: "http://127.0.0.1:8200"
+      CONSUL_HTTP_ADDR: "consul-server:8500"
+      CONSUL_HTTP_TOKEN: "e95b599e-166e-7d80-08ad-aee76e7ddf19"
+    networks:
+      - consul_vault
     command: server -config=/vault/config/vault-config.json
     cap_add:
       - IPC_LOCK
     depends_on:
-      - consul
+      - consul-server
 
-  consul:
+  consul-server:
     build:
       context: ./consul
       dockerfile: Dockerfile
     ports:
       - 8500:8500
     restart: always
-    command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect 1 -config-file=/consul/config/config.json
     volumes:
       - ./consul/config/consul-config.json:/consul/config/config.json
       - ./consul/data:/consul/data
+    environment:
+      VAULT_ADDR: "http://vault-server:8200"
+      VAULT_TOKEN: "vault-plaintext-root-token"
+      CONSUL_HTTP_ADDR: "consul-server:8500"
+      CONSUL_HTTP_TOKEN: "e95b599e-166e-7d80-08ad-aee76e7ddf19"
+    networks:
+      - consul_vault
+    command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect 1 -config-file=/consul/config/config.json
+
+  
+  networks:
+    consul_vault:
+      driver: bridge
