@@ -25,6 +25,10 @@ ENV PATH="PATH=$PATH:$PWD/consul"
 # add the config file
 COPY ./config/consul-config.json /consul/config/consul-config.json
 
+# install vault
+RUN apk add --no-cache vault libcap \
+    setcap cap_ipc_lock= /usr/sbin/vault
+
 # expose ports
 EXPOSE 8300 8400 8500 8600
 
