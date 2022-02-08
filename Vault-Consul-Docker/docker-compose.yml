@@ -15,11 +15,8 @@ services:
       - ./vault/policies:/vault/policies
       - ./vault/data:/vault/data
       - ./vault/logs:/vault/logs
-      - ./consul/config/certs:/consul/config/certs:ro
-      - ./consul/config/acls:/consul/config/acls
     environment:
       VAULT_ADDR: "http://vault-server:8200"
-      VAULT_DEV_ROOT_TOKEN_ID: "vault-plaintext-root-token"
       VAULT_API_ADDR: "http://vault-server:8200"
       CONSUL_HTTP_ADDR: "consul-server:8500"
       CONSUL_HTTP_TOKEN: "e95b599e-166e-7d80-08ad-aee76e7ddf19"
@@ -44,7 +41,6 @@ services:
       - ./consul/data:/consul/data
     environment:
       VAULT_ADDR: "http://vault-server:8200"
-      VAULT_TOKEN: "vault-plaintext-root-token"
       CONSUL_HTTP_ADDR: "consul-server:8500"
       CONSUL_HTTP_TOKEN: "e95b599e-166e-7d80-08ad-aee76e7ddf19"
     networks:
