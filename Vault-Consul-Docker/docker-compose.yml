@@ -11,7 +11,7 @@ services:
     volumes:
       - ./vault/config:/vault/config
       - ./vault/policies:/vault/policies
-      - ./vault/data:/vault/data
+      - vault-data:/vault/data
       - ./vault/logs:/vault/logs
     environment:
       - VAULT_ADDR=http://127.0.0.1:8200
@@ -48,3 +48,4 @@ services:
 
 volumes:
   consul-backend:
+  vault-data:
