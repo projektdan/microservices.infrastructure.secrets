@@ -3,6 +3,7 @@ version: '3.8'
 services:
 
   vault-server:
+    container_name: vault-server
     build:
       context: ./vault
       dockerfile: Dockerfile
@@ -24,6 +25,7 @@ services:
       - consul-server-backend
 
   consul-server-backend:
+    container_name: consul-server-backend
     build:
       context: ./consul
       dockerfile: Dockerfile
@@ -36,6 +38,7 @@ services:
       - consul-backend:/consul/data
 
   consul-worker:
+    container_name: consul-worker
     build:
       context: ./consul
       dockerfile: Dockerfile
