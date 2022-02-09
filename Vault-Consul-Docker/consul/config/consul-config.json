@@ -1,8 +1,7 @@
 {
-    "node_name": "consul-server",
     "datacenter": "localhost",
     "data_dir": "/consul/data",
-    "log_level": "DEBUG",
+    "log_level": "ERROR",
     "server": true,
     "ui": true,
     "ports": {
