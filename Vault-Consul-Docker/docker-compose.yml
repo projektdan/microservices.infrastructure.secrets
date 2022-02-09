@@ -64,6 +64,7 @@ services:
     restart: always
 
   consul-vault-backend-worker:
+    container_name: consul-vault-backend-worker
     image: 'consul'
     init: true
     entrypoint: ''
@@ -74,8 +75,8 @@ services:
         set -ex
         until apk update; do sleep 3; done
         until apk add bind-tools; do sleep 3; done
-        until dig +short consul.service.consul; do sleep 1; done
-        docker-entrypoint.sh agent -datacenter docker -server -join consul.service.consul -disable-host-node-id -client 0.0.0.0 -ui
+        until dig +short consul-vault-backend-leader; do sleep 1; done
+        docker-entrypoint.sh agent -datacenter docker -server -join consul-vault-backend-leader -disable-host-node-id -client 0.0.0.0 -ui
     scale: 2
     networks:
       - consul_vault
