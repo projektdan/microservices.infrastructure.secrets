@@ -64,7 +64,6 @@ services:
     restart: always
 
   consul-vault-backend-worker:
-    container_name: consul-vault-backend-worker
     image: 'consul'
     init: true
     entrypoint: ''
