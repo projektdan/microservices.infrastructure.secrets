@@ -45,3 +45,6 @@ services:
       - ./consul/config/consul-config.json:/consul/config/consul-config.json
     depends_on:
       - consul-server-backend
+
+volumes:
+  consul-backend:
