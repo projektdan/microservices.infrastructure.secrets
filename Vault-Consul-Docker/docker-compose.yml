@@ -3,50 +3,90 @@ version: '3.6'
 services:
 
   vault-server:
-    build:
-      context: ./vault
-      dockerfile: Dockerfile
+    image: 'vault'
+    init: true
     container_name: vault-server
     ports:
       - 8200:8200
     restart: always
-    volumes:
-      - ./vault/config:/vault/config
-      - ./vault/policies:/vault/policies
-      - ./vault/data:/vault/data
-      - ./vault/logs:/vault/logs
-    environment:
-      VAULT_ADDR: "http://vault-server:8200"
-      VAULT_API_ADDR: "http://vault-server:8200"
-      CONSUL_HTTP_ADDR: "consul-server:8500"
-      CONSUL_HTTP_TOKEN: "e95b599e-166e-7d80-08ad-aee76e7ddf19"
     networks:
       - consul_vault
-    command: server -config=/vault/config/vault-config.json
+    command:
+      - "sh"
+      - "-c"
+      - |
+        set -ex
+        export IP=$$(ip -o ro get $$(ip ro | awk '$$1 == "default" { print $$3 }') | awk '{print $$5}')
+        export VAULT_API_ADDR="http://$${IP}:8200" VAULT_CLUSTER_ADDR="https://$${IP}:8201"
+        exec vault server -config=/vault/config
+    #set scale: 3 for HA configuration
+    scale: 1
+    environment:
+      VAULT_ADDR: 'http://127.0.0.1:8200'
+      VAULT_LOCAL_CONFIG: >-
+        {
+            "ui": true,
+            "backend": {
+                "consul": {
+                    "address": "consul-vault-backend-leader:8500",
+                    "path": "vault",
+                    "scheme": "http"
+                }
+            },
+            "default_lease_ttl": "168h",
+            "listener": {
+                "tcp": {
+                    "address": "0.0.0.0:8200",
+                    "tls_disable": "1"
+                }
+            },
+            "max_lease_ttl": "720h"
+        }
     cap_add:
       - IPC_LOCK
     depends_on:
-      - consul-server
+      - consul-vault-backend-worker
 
-  consul-server:
-    build:
-      context: ./consul
-      dockerfile: Dockerfile
-    container_name: consul-server
+  consul-vault-backend-leader:
+    container_name: consul-vault-backend-leader
     ports:
       - 8500:8500
-    restart: always
-    volumes:
-      - ./consul/config:/consul/config
-      - ./consul/data:/consul/data
-    environment:
-      VAULT_ADDR: "http://vault-server:8200"
-      CONSUL_HTTP_ADDR: "consul-server:8500"
-      CONSUL_HTTP_TOKEN: "e95b599e-166e-7d80-08ad-aee76e7ddf19"
+    image: 'consul'
+    init: true
+    command: 'agent -datacenter docker -server -bootstrap-expect 1 -disable-host-node-id -client 0.0.0.0 -ui -data-dir /consul/data'
+    healthcheck:
+      test: ['CMD', '/bin/sh', '-c', 'curl -sfLo /dev/null http://127.0.0.1:8500/v1/health/node/$$HOSTNAME']
+    scale: 1
     networks:
       - consul_vault
-    command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect 1 -config-file=/consul/config/consul-config.json
+    volumes:
+      - consul-vault-backend-volume:/consul/data
+    restart: always
+
+  consul-vault-backend-worker:
+    image: 'consul'
+    init: true
+    entrypoint: ''
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -ex
+        until apk update; do sleep 3; done
+        until apk add bind-tools; do sleep 3; done
+        until dig +short consul.service.consul; do sleep 1; done
+        docker-entrypoint.sh agent -datacenter docker -server -join consul.service.consul -disable-host-node-id -client 0.0.0.0 -ui
+    scale: 2
+    networks:
+      - consul_vault
+    restart: always
+    depends_on:
+      consul-vault-backend-leader:
+        condition: service_healthy
 
 networks:
   consul_vault:
     driver: bridge
+
+volumes:
+  consul-vault-backend-volume:
