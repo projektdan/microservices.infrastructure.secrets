@@ -81,8 +81,7 @@ services:
       - consul_vault
     restart: always
     depends_on:
-      consul-vault-backend-leader:
-        condition: service_healthy
+      - consul-vault-backend-leader
 
 networks:
   consul_vault:
