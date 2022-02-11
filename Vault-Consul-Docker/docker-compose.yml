@@ -35,6 +35,7 @@ services:
 
   consul-server-backend:
     container_name: consul-server-backend
+    init: true
     build:
       context: ./consul
       dockerfile: Dockerfile
@@ -47,3 +48,18 @@ services:
       - consul-server:/consul/data
     networks:
       - vault-network
+
+  consul-worker:
+    init: true
+    build:
+      context: ./consul
+      dockerfile: Dockerfile
+    command: docker-entrypoint.sh agent -datacenter docker -server -join consul-server-backend -disable-host-node-id -client 0.0.0.0 -ui
+    restart: always
+    scale: 2
+    networks:
+      - vault-network
+    volumes:
+      - ./consul/config/consul-config.json:/consul/config/consul-config.json
+    depends_on:
+      consul-server-backend:
