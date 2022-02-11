@@ -1,5 +1,6 @@
 {
     "datacenter": "consul-server-backend",
+    "data_dir": "-v consul-server",
     "log_level": "DEBUG",
     "server": true,
     "ui": true,
