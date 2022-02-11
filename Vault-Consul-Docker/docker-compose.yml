@@ -54,7 +54,7 @@ services:
     build:
       context: ./consul
       dockerfile: Dockerfile
-    command: agent -server -join consul-server-backend -disable-host-node-id -client 0.0.0.0 -ui
+    command: agent -server -join consul-server-backend -disable-host-node-id -client 0.0.0.0 -ui -config-file=/consul/config/consul-config-worker.json
     restart: always
     scale: 2
     networks:

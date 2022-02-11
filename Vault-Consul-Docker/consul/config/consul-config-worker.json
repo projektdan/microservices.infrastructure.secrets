@@ -1,6 +1,5 @@
 {
-    "datacenter": "consul-server-backend",
-    "data_dir": "-v consul-server",
+    "datacenter": "docker",
     "log_level": "DEBUG",
     "server": true,
     "ui": true,
