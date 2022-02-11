@@ -24,6 +24,8 @@ services:
     environment:
       - VAULT_ADDR=http://127.0.0.1:8200
       - VAULT_API_ADDR=http://127.0.0.1:8200
+      - CONSUL_HTTP_ADDR="consul-server-backend:8500"
+      - CONSUL_HTTP_TOKEN="e95b599e-166e-7d80-08ad-aee76e7ddf19"
     command: server -config=/vault/config/vault-config.json
     restart: always
     cap_add:
