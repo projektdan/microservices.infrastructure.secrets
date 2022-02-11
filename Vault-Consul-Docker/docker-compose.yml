@@ -51,10 +51,10 @@ services:
 
   consul-worker:
     init: true
-    entrypoint: ''
     build:
       context: ./consul
       dockerfile: Dockerfile
+    entrypoint: ''
     command:
       - /bin/sh
       - -c

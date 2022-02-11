@@ -6,6 +6,7 @@ ENV CONSUL_VERSION 1.10.2
 
 # create a new directory
 RUN mkdir /consul
+RUN mkdir /bin/sh
 
 # download dependencies
 RUN apk --no-cache add \
