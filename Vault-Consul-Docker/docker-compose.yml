@@ -60,6 +60,6 @@ services:
     networks:
       - vault-network
     volumes:
-      - ./consul/config/consul-config.json:/consul/config/consul-config.json
+      - ./consul/config/consul-config-worker.json:/consul/config/consul-config-worker.json
     depends_on:
       - consul-server-backend

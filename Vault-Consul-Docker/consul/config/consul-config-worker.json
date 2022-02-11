@@ -1,0 +1,9 @@
+{
+    "datacenter": "consul-server-backend",
+    "log_level": "DEBUG",
+    "server": true,
+    "ui": true,
+    "ports": {
+      "dns": 53
+    }
+  }
