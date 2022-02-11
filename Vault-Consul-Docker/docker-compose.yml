@@ -50,8 +50,8 @@ services:
       - vault-network
 
   consul-worker:
-    container_name: consul-worker
     init: true
+    entrypoint: ''
     build:
       context: ./consul
       dockerfile: Dockerfile
