@@ -1,5 +1,12 @@
 version: '3.8'
 
+volumes:
+  consul-server:
+
+networks:
+  vault-network:
+    driver: bridge
+
 services:
 
   vault-server:
@@ -37,24 +44,6 @@ services:
     restart: always
     volumes:
       - ./consul/config/consul-config.json:/consul/config/consul-config.json
-      - /etc/consul/data:/consul/data
+      - consul-server:/consul/data
     networks:
       - vault-network
-
-  consul-worker:
-    container_name: consul-worker
-    build:
-      context: ./consul
-      dockerfile: Dockerfile
-    command: agent -server -join consul-server-backend -config-file=/consul/config/consul-config.json
-    restart: always
-    volumes:
-      - ./consul/config/consul-config.json:/consul/config/consul-config.json
-    depends_on:
-      - consul-server-backend
-    networks:
-      - vault-network
-
-networks:
-  vault-network:
-    driver: bridge
