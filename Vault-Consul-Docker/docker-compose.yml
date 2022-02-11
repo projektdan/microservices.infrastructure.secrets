@@ -54,16 +54,7 @@ services:
     build:
       context: ./consul
       dockerfile: Dockerfile
-    entrypoint: ''
-    command:
-      - /bin/sh
-      - -c
-      - |
-        set -ex
-        until apk update; do sleep 3; done
-        until apk add bind-tools; do sleep 3; done
-        until dig +short consul-server-backend; do sleep 1; done
-        agent -datacenter docker -server -join consul-server-backend -disable-host-node-id -client 0.0.0.0 -ui
+    command: agent -datacenter docker -server -join consul-server-backend -disable-host-node-id -client 0.0.0.0 -ui
     restart: always
     scale: 2
     networks:
