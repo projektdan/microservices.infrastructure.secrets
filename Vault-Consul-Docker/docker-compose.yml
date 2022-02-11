@@ -37,7 +37,7 @@ services:
     restart: always
     volumes:
       - ./consul/config/consul-config.json:/consul/config/consul-config.json
-      - consul-backend:/consul/data
+      - /etc/consul/data:/consul/data
     networks:
       - vault-network
 
@@ -54,9 +54,6 @@ services:
       - consul-server-backend
     networks:
       - vault-network
-
-volumes:
-  consul-backend:
 
 networks:
   vault-network:
