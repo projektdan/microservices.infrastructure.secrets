@@ -9,8 +9,8 @@ networks:
 
 services:
 
-  consul-master-backend:
-    container_name: consul-master-backend
+  consul-master-datacenter1:
+    container_name: consul-master-datacenter1
     init: true
     build:
       context: ./consul
@@ -32,7 +32,7 @@ services:
     build:
       context: ./consul
       dockerfile: Dockerfile
-    command: agent -server -join consul-master-backend -disable-host-node-id -client 0.0.0.0 -ui -config-file=/consul/config/consul-config.json
+    command: agent -server -join consul-master-datacenter1 -disable-host-node-id -client 0.0.0.0 -ui -config-file=/consul/config/consul-config.json
     restart: always
     scale: 2
     volumes:
@@ -40,7 +40,7 @@ services:
       - ./consul/config/certs/:/consul/config/certs/:ro
       - ./consul/config/acls/:/consul/config/acls
     depends_on:
-      - consul-master-backend
+      - consul-master-datacenter1
     networks:
       - vault-network
     
@@ -53,19 +53,19 @@ services:
       - 8200:8200
     volumes:
       - ./vault/config:/vault/config
-      - ./vault/policies:/vault/policies
+      - ./vault/acls:/vault/acls
       - ./vault/data:/vault/data
       - ./vault/logs:/vault/logs
     environment:
       - VAULT_ADDR=http://127.0.0.1:8200
       - VAULT_API_ADDR=http://127.0.0.1:8200
-      - CONSUL_HTTP_ADDR="consul-master-backend:8500"
-      - CONSUL_HTTP_TOKEN="e95b599e-166e-7d80-08ad-aee76e7ddf19"
+      - CONSUL_HTTP_ADDR="consul-master-datacenter1:8500"
+      - CONSUL_HTTP_TOKEN="29acd331-c122-4bce-bfc7-daa01a9a236c"
     command: server -config=/vault/config/vault-config.json
     restart: always
     cap_add:
       - IPC_LOCK
     depends_on:
-      - consul-master-backend
+      - consul-master-datacenter1
     networks:
       - vault-network
