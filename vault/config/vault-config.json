@@ -1,8 +1,9 @@
 {
     "backend": {
       "consul": {
-        "address": "consul:8500",
-        "path": "vault/"
+        "address": "consul-master-datacenter1:8500",
+        "path": "vault/",
+        "token": "29acd331-c122-4bce-bfc7-daa01a9a236c"
       }
     },
     "listener": {
